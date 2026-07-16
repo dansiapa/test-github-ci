@@ -69,7 +69,7 @@ jobs:
         with:
           host: 3.229.68.221
           username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           source: "./artifact/*.war"
           target: "/home/ubuntu"
           strip_components: 1
@@ -79,7 +79,7 @@ jobs:
         with:
           host: 3.229.68.221
           username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             echo "==============================="
             echo "  Deployment Verification"
