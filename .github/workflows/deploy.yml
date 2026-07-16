@@ -71,10 +71,10 @@ jobs:
           username: ubuntu
           password: ${{ secrets.SERVER_PASSWORD }}
           source: "./artifact/*.war"
-          target: "/home/ubuntu"
+          target: "/opt/tomcat9/webapps"
           strip_components: 1
 
-      - name: Verify Deployment on Server
+      - name: Restart Tomcat & Verify Deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 3.229.68.221
@@ -82,15 +82,26 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             echo "==============================="
-            echo "  Deployment Verification"
+            echo "  Deployment & Restart"
             echo "==============================="
             echo ""
-            echo "WAR file:"
-            ls -lh /home/ubuntu/*.war
+            echo "WAR file deployed:"
+            ls -lh /opt/tomcat9/webapps/*.war
+            echo ""
+            echo "Restarting Tomcat..."
+            sudo systemctl restart tomcat9
+            sleep 5
+            echo ""
+            echo "Tomcat status:"
+            sudo systemctl is-active tomcat9
+            echo ""
+            echo "Testing app endpoint:"
+            curl -s -o /dev/null -w "HTTP %{http_code}" http://localhost:8080/java-webapp-ci/
+            echo ""
             echo ""
             echo "Server info:"
             echo "  Host: $(hostname)"
             echo "  Date: $(date)"
             echo "  User: $(whoami)"
             echo ""
-            echo "✅ WAR successfully deployed to /home/ubuntu/"
+            echo "✅ WAR successfully deployed to Tomcat!"
